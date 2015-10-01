@@ -123,7 +123,17 @@ gwshell_run(char **args)
 
         /* Fork the process and execute stuff! */
 
-        // TODO
+        pid = fork();
+        if (pid < 0) {
+                /* Can't fork :( */
+        } else if (pid == 0) {
+                /* Child process - exec the given command */
+                execvp(args[0], args);
+        } else {
+                do {
+                        waitpid(pid, &status, WUNTRACED);
+                } while(!WIFEXITED(status) && !WIFSIGNALED(status));
+        }
 
         return 0;
 }
